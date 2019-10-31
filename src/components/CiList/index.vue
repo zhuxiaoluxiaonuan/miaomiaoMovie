@@ -1,88 +1,17 @@
 <template>
     <div class="cinema_body">
         <ul>
-            <li>
+            <li v-for="cinema in cinemas" :key="cinema.id">
                 <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
+                    <span>{{ cinema.nm }}</span>
+                    <span class="q"><span class="price">{{ cinema.sellPrice }}</span> 元起</span>
                 </div>
                 <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
+                    <span>{{ cinema.addr }}</span>
+                    <span>{{ cinema.distance }}</span>
                 </div>
                 <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
-                </div>
-            </li>
-            <li>
-                <div>
-                    <span>大地影院(澳东世纪店)</span>
-                    <span class="q"><span class="price">22.9</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>金州区大连经济技术开发区澳东世纪3层</span>
-                    <span>1763.5km</span>
-                </div>
-                <div class="card">
-                    <div>小吃</div>
-                    <div>折扣卡</div>
+                    <div v-for="(value, key) in cinema.tag" v-if="value==1"  :key="key" :class="key | classCard" >{{ key | formateCard }}</div>
                 </div>
             </li>
         </ul>
@@ -90,7 +19,38 @@
 </template>
 <script>
 export default {
-    name: 'CiList'
+    name: 'CiList',
+    data(){
+        return {
+            cinemas: []
+        }
+    },
+    created(){
+        this.axios.get('/api/cinemaList?cityId=10').then( res => {
+            let cinemas = res.data.data.cinemas;
+            this.cinemas = cinemas;
+        });
+    },
+    filters: {
+        formateCard(key){
+            let cardMap = {
+                'allowRefund': '退款',
+                'endorse': '退订',
+                'snack': '小吃',
+                'sell': '折扣卡'
+            }
+            return cardMap[key] ? cardMap[key] : '';
+        },
+        classCard(key){
+            let cardMap = {
+                'allowRefund': 'bl',
+                'endorse': 'bl',
+                'snack': 'or',
+                'sell': 'or'
+            }
+            return cardMap[key] ? cardMap[key] : '';
+        }
+    }
 }
 </script>
 <style scoped>
