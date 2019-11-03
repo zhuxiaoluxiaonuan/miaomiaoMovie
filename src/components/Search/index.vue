@@ -42,10 +42,10 @@ export default {
         keywords(newVal){
             let CancelToken = this.axios.CancelToken,
                 source = CancelToken.source();
-
             // 取消上一次请求
             this.cancelRequest();
-            this.axios.get(`/api/searchList?cityId=10&kw=${newVal}`, {
+            let cityId = this.$store.state.city.id;
+            this.axios.get(`/api/searchList?cityId=${cityId}&kw=${newVal}`, {
                 cancelToken: new this.axios.CancelToken( c => {
                     this.source = c;
                 })

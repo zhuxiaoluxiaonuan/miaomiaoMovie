@@ -1,20 +1,23 @@
 <template>
     <div class="cinema_body">
-        <ul>
-            <li v-for="cinema in cinemas" :key="cinema.id">
-                <div>
-                    <span>{{ cinema.nm }}</span>
-                    <span class="q"><span class="price">{{ cinema.sellPrice }}</span> 元起</span>
-                </div>
-                <div class="address">
-                    <span>{{ cinema.addr }}</span>
-                    <span>{{ cinema.distance }}</span>
-                </div>
-                <div class="card">
-                    <div v-for="(value, key) in cinema.tag" v-if="value==1"  :key="key" :class="key | classCard" >{{ key | formateCard }}</div>
-                </div>
-            </li>
-        </ul>
+        <Loading v-if="isLoading"/>
+        <Scroller v-else>
+            <ul>
+                <li v-for="cinema in cinemas" :key="cinema.id">
+                    <div>
+                        <span>{{ cinema.nm }}</span>
+                        <span class="q"><span class="price">{{ cinema.sellPrice }}</span> 元起</span>
+                    </div>
+                    <div class="address">
+                        <span>{{ cinema.addr }}</span>
+                        <span>{{ cinema.distance }}</span>
+                    </div>
+                    <div class="card">
+                        <div v-for="(value, key) in cinema.tag" v-if="value==1"  :key="key" :class="key | classCard" >{{ key | formateCard }}</div>
+                    </div>
+                </li>
+            </ul>
+        </Scroller>
     </div>
 </template>
 <script>
@@ -22,13 +25,20 @@ export default {
     name: 'CiList',
     data(){
         return {
-            cinemas: []
+            cinemas: [],
+            isLoading: true,
+            prevId: -1
         }
     },
-    created(){
-        this.axios.get('/api/cinemaList?cityId=10').then( res => {
+    activated(){
+        let cityId = this.$store.state.city.id;
+        if(this.prevId === cityId){
+            return;
+        }
+        this.axios.get('/api/cinemaList?cityId=' + cityId).then( res => {
             let cinemas = res.data.data.cinemas;
             this.cinemas = cinemas;
+            this.isLoading = false;
         });
     },
     filters: {

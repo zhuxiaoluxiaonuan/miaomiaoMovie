@@ -1,19 +1,22 @@
 <template>
     <div class="movie_body">
-        <ul>
-             <li v-for="movie in comingList" :key="movie.id">
-                <div class="pic_show"><img :src="movie.img | setImg('128.180')"></div>
-                <div class="info_list">
-                    <h2>{{ movie.nm }} <img v-if="movie.version" src="@/assets/maxs.png"/></h2>
-                    <p>观众评 <span class="grade">{{ movie.sc }}</span></p>
-                    <p>主演: {{ movie.star}}</p>
-                    <p>{{ movie.showInfo }}</p>
-                </div>
-                <div class="btn_pre">
-                    购票
-                </div>
-            </li>
-        </ul>
+        <Loading v-if="isLoading"/>
+        <Scroller v-else>
+            <ul>
+                <li v-for="movie in comingList" :key="movie.id">
+                    <div class="pic_show"><img :src="movie.img | setImg('128.180')"></div>
+                    <div class="info_list">
+                        <h2>{{ movie.nm }} <img v-if="movie.version" src="@/assets/maxs.png"/></h2>
+                        <p>观众评 <span class="grade">{{ movie.sc }}</span></p>
+                        <p>主演: {{ movie.star}}</p>
+                        <p>{{ movie.showInfo }}</p>
+                    </div>
+                    <div class="btn_pre">
+                        购票
+                    </div>
+                </li>
+            </ul>
+        </Scroller>
     </div>
 </template>   
 <script>
@@ -21,12 +24,20 @@ export default {
     name: 'ComingSoon',
     data(){
         return{
-            comingList: []
+            comingList: [],
+            isLoading: true,
+            prevId: -1
         }
     },
-    created(){
-        this.axios.get('/api/movieComingList?cityId=10').then( res => {
+    activated(){
+        let cityId = this.$store.state.city.id;
+        if(this.prevId === cityId){
+            return;
+        }
+        this.isLoading = true;
+        this.axios.get('/api/movieComingList?cityId=' + cityId).then( res => {
             this.comingList = res.data.data.comingList;
+            this.isLoading = false;
         })
     }
 }
