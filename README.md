@@ -241,3 +241,50 @@ import {messageBox} from '@/components/JS'
     }
 });
 ```
+## day4 电影详细页面开发
+### 子组件的路由设计
++ 将电影详细页面看做是电影页面的子路由，由于电影页面已经存在一个子路由，因此需要使用“命名视图”，在一个组件里面需要定义多个子路由，则需要为`router-view`标签添加`name`属性，以此来区分子组件。例如，有如下子路由`<router-view name='detail'></router-view>`，则它的路由配置为：
+```javascript
+{
+    path: 'detail/1/:movieId',
+    components:{
+        default: () => import('@/components/NowPlaying'), //默认展示的组件
+        detail: () => import('@/views/Movie/detail') //detail为router-view的name属性的属性值
+    }
+}
+```
+    + 如果没有设置`default`【默认显示的组件】，它会不显示任何内容，即空白展示，因此我们最好时设置一下。
++ 动态路由及参数获取
+    + 由父组件跳转到子组件页面时，需要传递参数，就可以用动态路由，例如`path: 'detail/1/:movieId'`
+    + 子组件页面接收参数可以使用如下方式：
+
+        1. `$route `
+        ```javascript
+        const User = {
+            template: '<div>User {{ $route.params.id }}</div>'
+        }
+        ```
+        2. 取代与 $route 的耦合[在组件中使用 $route 会使之与其对应路由形成高度耦合，从而使组件只能在某些特定的 URL 上使用，限制了其灵活性。]
+        ```javascript
+        const User = {
+            template: '<div>User {{ $route.params.id }}</div>'
+        }
+        ```
+        ```javascript
+        const User = {
+            props: ['id'],
+            template: '<div>User {{ id }}</div>'
+        }
+            const router = new VueRouter({
+            routes: [
+                { path: '/user/:id', component: User, props: true },
+
+                // 对于包含命名视图的路由，你必须分别为每个命名视图添加 `props` 选项：
+                {
+                    path: '/user/:id',
+                    components: { default: User, sidebar: Sidebar },
+                    props: { default: true, sidebar: false }
+                }
+            ]
+        })
+        + 如果 props 被设置为 true，route.params 将会被设置为组件属性

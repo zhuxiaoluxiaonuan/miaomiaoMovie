@@ -19,6 +19,7 @@
             </keep-alive>
         </div>
         <Tabber />
+        <router-view name='detail'/>
     </div>
 </template>
 <script>

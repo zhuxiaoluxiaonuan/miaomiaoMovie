@@ -4,7 +4,7 @@
         <Scroller v-else :handleToScroll = 'handleToScroll' :handleToTouchEnd = 'handleToTouchEnd'>
             <ul>
                 <li v-if="isUpdate" class="update">{{ message }}</li>
-                <li v-for="movie in movieList" :key="movie.id">
+                <li v-for="movie in movieList" :key="movie.id" @touchstart='handleDetail(movie.id)'>
                     <div class="pic_show"><img :src="movie.img | setImg('128.180')"></div>
                     <div class="info_list">
                         <h2>{{ movie.nm }} <img v-if="movie.version" src="@/assets/maxs.png"/></h2>
@@ -49,6 +49,9 @@ export default {
                 }, 1000);
                 })
             }
+        },
+        handleDetail(movieId){
+            this.$router.push('/movie/detail/1/' + movieId);
         }
     },
     activated(){

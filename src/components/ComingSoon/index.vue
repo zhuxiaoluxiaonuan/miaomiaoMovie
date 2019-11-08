@@ -3,7 +3,7 @@
         <Loading v-if="isLoading"/>
         <Scroller v-else>
             <ul>
-                <li v-for="movie in comingList" :key="movie.id">
+                <li v-for="movie in comingList" :key="movie.id" @touchstart='handleDetail'>
                     <div class="pic_show"><img :src="movie.img | setImg('128.180')"></div>
                     <div class="info_list">
                         <h2>{{ movie.nm }} <img v-if="movie.version" src="@/assets/maxs.png"/></h2>
@@ -39,6 +39,11 @@ export default {
             this.comingList = res.data.data.comingList;
             this.isLoading = false;
         })
+    },
+    methods: {
+        handleDetail(movieId){
+            this.$router.push('/movie/detail/2/' + movieId);
+        }
     }
 }
 </script>
